@@ -13,6 +13,10 @@ jobs:
             target: x86_64-unknown-linux-gnu
             features: ''
             test: false
+          - dir: gui
+            target: x86_64-unknown-linux-gnu
+            features: ''
+            test: false
           - dir: home
             target: riscv32imc-unknown-none-elf
             features: esp32c3

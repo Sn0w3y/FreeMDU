@@ -19,10 +19,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Install Linux dependencies
+        if: inputs.dir == 'gui' || inputs.dir == 'tui'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libudev-dev libxkbcommon-dev
       - name: Setup toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
+          targets: ${{ inputs.target }}
       - name: Build crate
         run: cargo build --target "${{ inputs.target }}" --features "${{ inputs.features }}" --release
       - name: Format code
