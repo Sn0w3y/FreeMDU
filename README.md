@@ -1,4 +1,4 @@
-# FreeMDU [![Build Status](https://img.shields.io/github/actions/workflow/status/medusalix/FreeMDU/ci.yml)](https://github.com/medusalix/FreeMDU/actions/workflows/ci.yml)
+# FreeMDU [![Build Status](https://img.shields.io/github/actions/workflow/status/Sn0w3y/FreeMDU-GUI/ci.yml)](https://github.com/Sn0w3y/FreeMDU-GUI/actions/workflows/ci.yml)
 
 <p align="center">
   <img src="demo.gif" alt="Demo">
