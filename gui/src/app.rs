@@ -102,17 +102,8 @@ impl FreeMduApp {
 
         let port_name = self.available_ports[self.selected_port].clone();
         self.connection_state = ConnectionState::Connecting;
-
-        match WorkerHandle::new(&port_name) {
-            Ok(handle) => {
-                self.worker = Some(handle);
-                self.set_status(&format!("Connecting to {port_name}..."), false);
-            }
-            Err(e) => {
-                self.connection_state = ConnectionState::Error(e.to_string());
-                self.set_status(&format!("Failed to connect: {e}"), true);
-            }
-        }
+        self.worker = Some(WorkerHandle::new(&port_name));
+        self.set_status(&format!("Connecting to {port_name}..."), false);
     }
 
     fn disconnect(&mut self) {
@@ -335,14 +326,14 @@ impl FreeMduApp {
         ui.checkbox(&mut self.auto_refresh, "Auto-refresh");
 
         // Manual refresh button
-        if matches!(self.connection_state, ConnectionState::Connected(_)) {
-            if ui.button("Refresh All").clicked() {
-                // Clear last update times to force refresh
-                self.properties.general.1 = None;
-                self.properties.failure.1 = None;
-                self.properties.operation.1 = None;
-                self.properties.io.1 = None;
-            }
+        if matches!(self.connection_state, ConnectionState::Connected(_))
+            && ui.button("Refresh All").clicked()
+        {
+            // Clear last update times to force refresh
+            self.properties.general.1 = None;
+            self.properties.failure.1 = None;
+            self.properties.operation.1 = None;
+            self.properties.io.1 = None;
         }
     }
 

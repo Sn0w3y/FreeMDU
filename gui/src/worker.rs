@@ -69,7 +69,7 @@ pub struct WorkerHandle {
 }
 
 impl WorkerHandle {
-    pub fn new(port_name: &str) -> Result<Self, String> {
+    pub fn new(port_name: &str) -> Self {
         let (cmd_tx, cmd_rx) = mpsc::channel();
         let (resp_tx, resp_rx) = mpsc::channel();
         let port_name = port_name.to_string();
@@ -78,11 +78,11 @@ impl WorkerHandle {
             run_worker(&port_name, cmd_rx, resp_tx);
         });
 
-        Ok(Self {
+        Self {
             tx: cmd_tx,
             rx: resp_rx,
             handle,
-        })
+        }
     }
 
     pub fn send(&self, cmd: WorkerCommand) {
@@ -105,6 +105,7 @@ impl Drop for WorkerHandle {
 }
 
 /// Run the worker thread - connects to device and handles commands
+#[allow(clippy::too_many_lines)]
 fn run_worker(port_name: &str, cmd_rx: Receiver<WorkerCommand>, resp_tx: Sender<WorkerResponse>) {
     // Create a tokio runtime for async device operations
     let rt = match tokio::runtime::Builder::new_current_thread()

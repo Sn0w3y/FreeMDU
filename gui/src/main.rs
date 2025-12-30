@@ -25,26 +25,28 @@ fn main() -> Result<()> {
     .map_err(|e| anyhow::anyhow!("Failed to run application: {e}"))
 }
 
+#[allow(clippy::cast_precision_loss)]
 fn load_icon() -> egui::IconData {
-    // Simple default icon - a wrench/tool symbol
-    let size = 32;
-    let mut rgba = vec![0u8; size * size * 4];
+    // Simple default icon - a blue circle
+    const SIZE: u32 = 32;
+    const SIZE_F: f32 = SIZE as f32;
+    let mut rgba = vec![0u8; (SIZE * SIZE * 4) as usize];
 
     // Create a simple blue circle icon
-    for y in 0..size {
-        for x in 0..size {
-            let idx = (y * size + x) * 4;
-            let cx = x as f32 - size as f32 / 2.0;
-            let cy = y as f32 - size as f32 / 2.0;
+    for y in 0..SIZE {
+        for x in 0..SIZE {
+            let idx = ((y * SIZE + x) * 4) as usize;
+            let cx = x as f32 - SIZE_F / 2.0;
+            let cy = y as f32 - SIZE_F / 2.0;
             let dist = (cx * cx + cy * cy).sqrt();
 
-            if dist < size as f32 / 2.0 - 2.0 {
+            if dist < SIZE_F / 2.0 - 2.0 {
                 // Blue fill
                 rgba[idx] = 66; // R
                 rgba[idx + 1] = 133; // G
                 rgba[idx + 2] = 244; // B
                 rgba[idx + 3] = 255; // A
-            } else if dist < size as f32 / 2.0 {
+            } else if dist < SIZE_F / 2.0 {
                 // White border
                 rgba[idx] = 255;
                 rgba[idx + 1] = 255;
@@ -56,7 +58,7 @@ fn load_icon() -> egui::IconData {
 
     egui::IconData {
         rgba,
-        width: size as u32,
-        height: size as u32,
+        width: SIZE,
+        height: SIZE,
     }
 }
