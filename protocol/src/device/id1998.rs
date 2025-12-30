@@ -17,7 +17,7 @@ use crate::device::{
     Action, Device, DeviceKind, Error, Interface, Property, PropertyKind, Result, Value, private,
     utils,
 };
-use alloc::boxed::Box;
+use alloc::{boxed::Box, string::ToString};
 use bitflags_derive::{FlagsDebug, FlagsDisplay};
 use core::time::Duration;
 use embedded_io_async::{Read, Write};
