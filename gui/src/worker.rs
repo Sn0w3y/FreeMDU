@@ -125,32 +125,26 @@ fn run_worker(port_name: &str, cmd_rx: Receiver<WorkerCommand>, resp_tx: Sender<
         let mut port = match freemdu::serial::open(port_name) {
             Ok(p) => p,
             Err(e) => {
-                let _ = resp_tx.send(WorkerResponse::Error(format!(
-                    "Failed to open port: {e}"
-                )));
+                let _ = resp_tx.send(WorkerResponse::Error(format!("Failed to open port: {e}")));
                 return;
             }
         };
 
         // Connect to device with timeout
-        let dev = match tokio::time::timeout(
-            Duration::from_secs(5),
-            freemdu::device::connect(&mut port),
-        )
-        .await
-        {
-            Ok(Ok(d)) => d,
-            Ok(Err(e)) => {
-                let _ = resp_tx.send(WorkerResponse::Error(format!(
-                    "Failed to connect: {e}"
-                )));
-                return;
-            }
-            Err(_) => {
-                let _ = resp_tx.send(WorkerResponse::Error("Connection timeout".to_string()));
-                return;
-            }
-        };
+        let dev =
+            match tokio::time::timeout(Duration::from_secs(5), freemdu::device::connect(&mut port))
+                .await
+            {
+                Ok(Ok(d)) => d,
+                Ok(Err(e)) => {
+                    let _ = resp_tx.send(WorkerResponse::Error(format!("Failed to connect: {e}")));
+                    return;
+                }
+                Err(_) => {
+                    let _ = resp_tx.send(WorkerResponse::Error("Connection timeout".to_string()));
+                    return;
+                }
+            };
 
         // Send connected response
         let info = DeviceInfo {
@@ -175,11 +169,8 @@ fn run_worker(port_name: &str, cmd_rx: Receiver<WorkerCommand>, resp_tx: Sender<
                     let mut data = Vec::new();
 
                     for prop in properties.iter().filter(|p| p.kind == kind) {
-                        match tokio::time::timeout(
-                            Duration::from_secs(1),
-                            dev.query_property(prop),
-                        )
-                        .await
+                        match tokio::time::timeout(Duration::from_secs(1), dev.query_property(prop))
+                            .await
                         {
                             Ok(Ok(value)) => {
                                 data.push(PropertyData {

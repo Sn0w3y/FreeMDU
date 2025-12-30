@@ -1,4 +1,6 @@
-use crate::worker::{DeviceInfo, PropertyData, PropertyValue, WorkerCommand, WorkerHandle, WorkerResponse};
+use crate::worker::{
+    DeviceInfo, PropertyData, PropertyValue, WorkerCommand, WorkerHandle, WorkerResponse,
+};
 use egui::{Color32, RichText, Ui};
 use freemdu::device::{ActionParameters, PropertyKind};
 use std::time::{Duration, Instant};
@@ -153,10 +155,7 @@ impl FreeMduApp {
                     if success {
                         self.set_status(&format!("Action '{action_name}' executed"), false);
                     } else {
-                        self.set_status(
-                            &format!("Action '{action_name}' failed: {message}"),
-                            true,
-                        );
+                        self.set_status(&format!("Action '{action_name}' failed: {message}"), true);
                     }
                 }
                 WorkerResponse::Error(e) => {
@@ -258,27 +257,25 @@ impl eframe::App for FreeMduApp {
         }
 
         // Central panel with properties
-        egui::CentralPanel::default().show(ctx, |ui| {
-            match &self.connection_state {
-                ConnectionState::Disconnected => {
-                    ui.centered_and_justified(|ui| {
-                        ui.label("Select a serial port and click Connect to start.");
-                    });
-                }
-                ConnectionState::Connecting => {
-                    ui.centered_and_justified(|ui| {
-                        ui.spinner();
-                        ui.label("Connecting to device...");
-                    });
-                }
-                ConnectionState::Connected(_) => {
-                    self.render_properties(ui);
-                }
-                ConnectionState::Error(e) => {
-                    ui.centered_and_justified(|ui| {
-                        ui.colored_label(Color32::RED, format!("Error: {e}"));
-                    });
-                }
+        egui::CentralPanel::default().show(ctx, |ui| match &self.connection_state {
+            ConnectionState::Disconnected => {
+                ui.centered_and_justified(|ui| {
+                    ui.label("Select a serial port and click Connect to start.");
+                });
+            }
+            ConnectionState::Connecting => {
+                ui.centered_and_justified(|ui| {
+                    ui.spinner();
+                    ui.label("Connecting to device...");
+                });
+            }
+            ConnectionState::Connected(_) => {
+                self.render_properties(ui);
+            }
+            ConnectionState::Error(e) => {
+                ui.centered_and_justified(|ui| {
+                    ui.colored_label(Color32::RED, format!("Error: {e}"));
+                });
             }
         });
     }
@@ -323,7 +320,10 @@ impl FreeMduApp {
                 self.disconnect();
             }
         } else if ui
-            .add_enabled(!self.available_ports.is_empty(), egui::Button::new("Connect"))
+            .add_enabled(
+                !self.available_ports.is_empty(),
+                egui::Button::new("Connect"),
+            )
             .clicked()
         {
             self.connect();
@@ -473,12 +473,10 @@ impl FreeMduApp {
                     if let Some(params) = &action.params {
                         match params {
                             ActionParamsInfo::Enumeration(options) => {
-                                let current = self
-                                    .action_inputs
-                                    .entry(action.id.clone())
-                                    .or_insert_with(|| {
-                                        options.first().cloned().unwrap_or_default()
-                                    });
+                                let current =
+                                    self.action_inputs.entry(action.id.clone()).or_insert_with(
+                                        || options.first().cloned().unwrap_or_default(),
+                                    );
 
                                 egui::ComboBox::from_id_salt(&action.id)
                                     .selected_text(current.as_str())

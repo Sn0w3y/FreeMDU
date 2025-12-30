@@ -8,11 +8,11 @@
 //! Use the [`connect`] function to automatically select the correct device
 //! implementation based on the devices's software ID.
 
+pub mod id1998;
 pub mod id360;
 pub mod id419;
 pub mod id605;
 pub mod id629;
-pub mod id1998;
 
 use crate::{Error as ProtocolError, Interface, Read, Write};
 use alloc::{boxed::Box, string::String};
